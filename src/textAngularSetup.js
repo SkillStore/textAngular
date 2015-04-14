@@ -83,7 +83,7 @@ angular.module('textAngularSetup', [])
 	//toggleHTML: "Toggle HTML",
 	//insertImage: "Please enter a image URL to insert",
 	//insertLink: "Please enter a URL to insert",
-	//insertVideo: "Please enter a youtube URL to embed",
+	//insertVideo: "Please enter an S3 video URL to embed",
 	html: {
 		tooltip: 'Toggle html / Rich Text'
 	},
@@ -149,7 +149,7 @@ angular.module('textAngularSetup', [])
 	},
 	insertVideo: {
 		tooltip: 'Insert video',
-		dialogPrompt: 'Please enter a youtube URL to embed'
+		dialogPrompt: 'Please enter an S3 mp4 video URL to embed'
 	},
 	insertLink: {
 		tooltip: 'Insert / edit link',
@@ -556,25 +556,15 @@ angular.module('textAngularSetup', [])
 		}
 	});
 	taRegisterTool('insertVideo', {
-		iconclass: 'fa fa-youtube-play',
+		iconclass: 'fa fa-file-video-o',
 		tooltiptext: taTranslations.insertVideo.tooltip,
 		action: function(){
 			var urlPrompt;
-			urlPrompt = $window.prompt(taTranslations.insertVideo.dialogPrompt, 'https://');
-			if (urlPrompt && urlPrompt !== '' && urlPrompt !== 'https://') {
-				// get the video ID
-				var ids = urlPrompt.match(/(\?|&)v=[^&]*/);
-				/* istanbul ignore else: if it's invalid don't worry - though probably should show some kind of error message */
-				if(ids && ids.length > 0){
-					// create the embed link
-					var urlLink = "https://www.youtube.com/embed/" + ids[0].substring(3);
-					// create the HTML
-					// for all options see: http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
-					// maxresdefault.jpg seems to be undefined on some.
-					var embed = '<img class="ta-insert-video" src="https://img.youtube.com/vi/' + ids[0].substring(3) + '/hqdefault.jpg" ta-insert-video="' + urlLink + '" contenteditable="false" src="" allowfullscreen="true" frameborder="0" />';
-					// insert
-					return this.$editor().wrapSelection('insertHTML', embed, true);
-				}
+			urlPrompt = $window.prompt(taTranslations.insertVideo.dialogPrompt, 'http://');
+			if (urlPrompt && urlPrompt !== '' && urlPrompt !== 'http://') {
+				var embed = '<video width="100%" height="auto" preload="auto" controls poster=""><source src="' + urlPrompt + '" type="video/mp4">There was a problem playing this video. Please contact support@skillstore.com.</video>';
+				// insert
+				return this.$editor().wrapSelection('insertHTML', embed, true);
 			}
 		},
 		onElementSelect: {

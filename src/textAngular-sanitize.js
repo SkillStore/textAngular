@@ -178,7 +178,7 @@ var START_TAG_REGEXP =
 
 // Safe Void Elements - HTML5
 // http://dev.w3.org/html5/spec/Overview.html#void-elements
-var voidElements = makeMap("area,br,col,hr,img,wbr");
+var voidElements = makeMap("area,br,col,hr,img,source,wbr");
 
 // Elements that you can, intentionally, leave open (and which close themselves)
 // http://dev.w3.org/html5/spec/Overview.html#optional-tags
@@ -196,7 +196,7 @@ var blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("add
 // Inline Elements - HTML5
 var inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b," +
         "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
-        "samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
+        "samp,small,span,strike,strong,sub,sup,time,tt,u,var,video"));
 
 // SVG Elements
 // https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
@@ -543,6 +543,15 @@ function validCustomTag(tag, attrs, lkey, value){
 	// catch the div placeholder for the iframe replacement
     if (tag === 'img' && attrs['ta-insert-video']){
         if(lkey === 'ta-insert-video' || lkey === 'allowfullscreen' || lkey === 'frameborder' || (lkey === 'contenteditable' && value === 'false')) return true;
+    }
+    // video and source are for inserting html5 video tags
+    else if (tag === 'video') {
+      var validKeys = ['width', 'height', 'preload', 'controls', 'poster'];
+      if (validKeys.indexOf(lkey) > -1) return true;
+    }
+    else if (tag === 'source') {
+      var validKeys = ['src', 'type'];
+      if (validKeys.indexOf(lkey) > -1) return true;
     }
     return false;
 }
